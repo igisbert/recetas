@@ -1,0 +1,50 @@
+---
+interface Props {
+  advice?: string;
+}
+
+import Icon from "./Icon.astro";
+
+const { advice } = Astro.props;
+
+const advices = advice?.split("|");
+---
+
+{
+  advices?.map((item, index) => (
+    <article class:list={["advice", { first: index === 0 }]}>
+      <div class="icon-container">
+        <Icon name="tip" size={36} strokeWidth="1" />
+      </div>
+      <span class="advice-value">{item}</span>
+    </article>
+  ))
+}
+
+<style>
+  .advice {
+    font-family: "DMSans", sans-serif;
+    margin: 1.5rem 0;
+    padding: 1.6rem 0.8rem;
+    border-radius: 12px;
+    background: var(--input);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .first {
+    margin-top: 3rem;
+  }
+
+  .icon-container {
+    min-width: 36px;
+    display: flex;
+  }
+
+  .advice-value {
+    color: var(--text);
+  }
+</style>

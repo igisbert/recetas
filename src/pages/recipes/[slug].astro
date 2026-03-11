@@ -1,0 +1,183 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import { CATEGORIES } from "@/constants/recipes";
+import Icon from "@/components/Icon.astro";
+import RecipeStepper from "@/components/RecipeStepper.astro";
+import Difficulty from "@/components/Difficulty.astro";
+import Advice from "@/components/Advice.astro";
+import Macros from "@/components/Macros.astro";
+import ShareButton from "@/components/ShareButton.astro";
+
+export async function getStaticPaths() {
+  const recipes = await getCollection("recipes");
+  return recipes.map((recipe) => ({
+    params: { slug: recipe.id },
+    props: { recipe },
+  }));
+}
+
+const { recipe } = Astro.props;
+const { Content } = await render(recipe);
+
+const categoryName =
+  CATEGORIES.find((c) => c.id === recipe.data.category)?.name ||
+  recipe.data.category;
+---
+
+<Layout title={recipe.data.title} description={recipe.data.description}>
+  <article class="recipe-content">
+    <header>
+      <div class="header-top">
+        <div class="header-top-left">
+          <a href="/" class="back-link"
+            ><Icon name="move-left" size={24} strokeWidth="1.5" /> Volver al índice</a
+          >
+          <span class="category-tag">{categoryName}</span>
+        </div>
+        <Difficulty difficulty={recipe.data.difficulty} />
+      </div>
+      <h1>{recipe.data.title}</h1>
+      {
+        recipe.data.description && (
+          <p class="description">{recipe.data.description}</p>
+        )
+      }
+    </header>
+
+    <div class="recipe-body">
+      <RecipeStepper
+        initialServings={recipe.data.servings}
+        ingredients={recipe.data.ingredients}
+        showStepper={recipe.data.showStepper}
+      />
+      <Macros
+        kcal={recipe.data.macros?.kcal || 0}
+        carbs={recipe.data.macros?.carbs || 0}
+        protein={recipe.data.macros?.protein || 0}
+        fat={recipe.data.macros?.fat || 0}
+      />
+      <Content />
+      <Advice advice={recipe.data.advice} />
+      <div class="recipe-footer">
+        <ShareButton title={recipe.data.title} url={Astro.url.pathname} />
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .recipe-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  .header-top-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .back-link {
+    color: var(--links);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .back-link:hover {
+    color: var(--white);
+    text-decoration: underline;
+  }
+
+  .category-tag {
+    background: var(--input);
+    color: var(--text);
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 9999rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-family: "DMMono", monospace;
+  }
+
+  h1 {
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+    color: var(--white);
+  }
+
+  .description {
+    font-size: 1.2rem;
+    color: var(--text);
+    opacity: 0.8;
+    font-style: italic;
+    margin-bottom: 2rem;
+  }
+
+  .recipe-body {
+    line-height: 1.6;
+  }
+
+  .recipe-footer {
+    margin: 3rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Estilos el contenido markdown*/
+  .recipe-body :global(ol) {
+    list-style: none;
+    counter-reset: recipe-counter;
+    padding-left: 0;
+    margin-top: 2rem;
+  }
+
+  .recipe-body :global(ol li) {
+    counter-increment: recipe-counter;
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .recipe-body :global(ol li::before) {
+    content: counter(recipe-counter);
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 2rem;
+    height: 2rem;
+    background: var(--input);
+    border: 1px solid var(--border);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "DMMono", monospace;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .recipe-body :global(h2) {
+    font-size: 1.8rem;
+    color: var(--white);
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+</style>

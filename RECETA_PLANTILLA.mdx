@@ -1,0 +1,33 @@
+---
+title: "Nombre de la Receta"
+description: "Una breve descripción de lo que hace especial a esta receta."
+# Categoría (Debe ser una de: legumbres, carnes, arroces, verduras, postres, pasta, masas-panes, otros)
+category: "otros"
+difficulty: # "easy" | "medium" | "hard"
+advice: "Consejo o truco para la receta. Es opcional.|Separar con una barra crea varios consejos."
+# ShowStepper false oculta el menú de configurar las personas.
+# Usar en recetas como masas o panes, que no hay un número determinado de comensales
+showStepper: false
+macros: { kcal: 800, carbs: 12, protein: 12, fat: 12 }
+ingredients:
+  # Ejemplo A: Escalado lineal (g, ml, etc.) - scale: 1
+  - { name: "Arroz", value: 200, unit: "g", scale: 1 }
+
+  # Ejemplo B: Escalado inteligente (unidades que no crecen linealmente) - scale: 0.5
+  # Usamos el formato "singular|plural" para que el texto cambie correctamente.
+  - { name: "Cebolla", value: 1, unit: "unidad|unidades", scale: 0.5 }
+  - { name: "Diente de ajo", value: 1, unit: "diente|dientes", scale: 0.33 }
+
+  # Ejemplo C: Cantidad fija (no cambia aunque subas raciones) - scale: 0
+  - { name: "Aceite de oliva", value: 1, unit: "chorrito", scale: 0 }
+
+  # Ejemplo D: Valor de texto (comodines "al gusto") - no usar unit y scale: 0
+  - { name: "Sal y pimienta", value: "al gusto", scale: 0 }
+  - { name: "Nuez moscada", value: "una pizca", scale: 0 }
+---
+
+## Pasos
+
+1. Paso 1
+2. Paso 2
+3. Paso 3

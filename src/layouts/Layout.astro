@@ -1,23 +1,71 @@
+---
+import "@/styles/reset.css";
+import "@/styles/index.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Mis Recetas",
+  description = "Mi recetario personal: platos favoritos y experimentos culinarios.",
+} = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={ Astro.generator } />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site || "http://localhost:4321")} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0d0d0d" /> <!-- Color de fondo de tu CSS -->
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <link
+      rel="preload"
+      href="/fonts/DMSans-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/DMMono-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+<style is:global>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>

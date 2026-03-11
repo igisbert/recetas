@@ -1,0 +1,47 @@
+---
+interface Props {
+  difficulty: "easy" | "medium" | "hard";
+}
+
+const { difficulty } = Astro.props;
+
+const translations = {
+  easy: "Fácil",
+  medium: "Medio",
+  hard: "Difícil",
+};
+
+const difficultyClass = {
+  easy: "easy",
+  medium: "medium",
+  hard: "hard",
+};
+---
+
+<div class={`difficulty ${difficultyClass[difficulty]}`}>
+  <span class="difficulty-value">{translations[difficulty]}</span>
+</div>
+
+<style>
+  .difficulty {
+    color: var(--black);
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 9999rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-family: "DMMono", monospace;
+  }
+
+  .easy {
+    background-color: var(--green);
+  }
+
+  .medium {
+    background-color: var(--yellow);
+  }
+
+  .hard {
+    background-color: var(--red);
+  }
+</style>

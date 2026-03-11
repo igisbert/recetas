@@ -1,0 +1,188 @@
+---
+interface Props {
+  kcal: number | 0;
+  carbs: number | 0;
+  protein: number | 0;
+  fat: number | 0;
+}
+
+import Pie from "./Pie.astro";
+import Icon from "./Icon.astro";
+
+import { COLOR_CARBS, COLOR_PROTEIN, COLOR_FAT } from "@/constants/recipes";
+
+const { kcal, carbs, protein, fat } = Astro.props;
+
+if (kcal === 0 && carbs === 0 && protein === 0 && fat === 0) return;
+---
+
+<details>
+  <summary>
+    <span class="summary-left">
+      <Icon name="chevron" size={24} strokeWidth="1" />
+      <span>Información nutricional</span>
+    </span>
+    <span class="summary-right">{kcal} kcal</span>
+  </summary>
+  <div class="macros">
+    <div class="disclaimer">
+      <span>Información nutricional aproximada por ración</span>
+      <span>Datos calculados con Gemini</span>
+    </div>
+    <div class="pie-container">
+      <Pie carbs={carbs} protein={protein} fat={fat} />
+    </div>
+    <div class="macro-list-container">
+      <div class="macro-list">
+        <div class="macro-list-item">
+          <span class="macro-list-item-color" style={`background: ${COLOR_FAT}`}
+          ></span>
+          <span class="macro-list-item-label">Grasas</span>
+          <span class="macro-list-item-value">{fat} g</span>
+        </div>
+        <div class="macro-list-item">
+          <span
+            class="macro-list-item-color"
+            style={`background: ${COLOR_CARBS}`}></span>
+          <span class="macro-list-item-label">Carbohidratos</span>
+          <span class="macro-list-item-value">{carbs} g</span>
+        </div>
+        <div class="macro-list-item">
+          <span
+            class="macro-list-item-color"
+            style={`background: ${COLOR_PROTEIN}`}></span>
+          <span class="macro-list-item-label">Proteínas</span>
+          <span class="macro-list-item-value">{protein} g</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</details>
+
+<style>
+  details {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    background: var(--input);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  details::details-content {
+    overflow: hidden;
+    height: 0;
+    transition:
+      height 600ms,
+      content-visibility 600ms allow-discrete;
+  }
+
+  details[open]::details-content {
+    height: auto;
+  }
+
+  summary {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
+    padding: 1.6rem 0.8rem;
+    cursor: pointer;
+  }
+
+  .summary-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .summary-right {
+    background: var(--input);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 9999rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-family: "DMMono", monospace;
+  }
+
+  .macros {
+    width: 100%;
+    display: flex;
+    gap: 3rem;
+    padding: 3.5rem 2rem 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  @media (width < 550px) {
+    .macros {
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding-top: 4.5rem;
+    }
+  }
+
+  .legend-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .macro-list-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .macro-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .macro-list-item-color {
+    width: 0.75rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+
+  .macro-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .macro-list-item-value {
+    flex: 1;
+    text-align: right;
+  }
+
+  .disclaimer {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text);
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+</style>
+
+<style is:global>
+  details .summary-left svg {
+    transform: rotate(0deg);
+    transition: transform 600ms;
+  }
+
+  details[open] .summary-left svg {
+    transform: rotate(90deg);
+  }
+</style>

@@ -1,0 +1,107 @@
+---
+import Icon from "./Icon.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  recipe: CollectionEntry<"recipes">;
+}
+
+const { recipe } = Astro.props;
+const { title, description } = recipe.data;
+---
+
+<a
+  class="recipe-item"
+  href={`/recipes/${recipe.id}`}
+  style={`view-transition-name: recipe-${recipe.id}`}
+>
+  <li data-title={title.toLowerCase()}>
+    <div class="recipe-item-content">
+      <h3 class="recipe-title">{title}</h3>
+      {description && <p>{description}</p>}
+    </div>
+    <div class="arrow-container">
+      <Icon name="move-right" size={24} strokeWidth="1.5" />
+    </div>
+  </li>
+</a>
+
+<style>
+  .recipe-item {
+    margin-bottom: 1.5rem;
+    position: relative;
+    text-decoration: none;
+    display: block;
+  }
+
+  .recipe-item::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 4px;
+    height: 100%;
+    background: var(--white);
+    border-radius: 1px;
+    transition: transform 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .recipe-item:hover::before {
+      transform: translateY(-50%) scaleY(1);
+    }
+  }
+
+  .recipe-item li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0rem;
+    list-style: none;
+  }
+
+  .recipe-item-content {
+    max-width: 85%;
+  }
+
+  .arrow-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--links);
+    transition:
+      color 0.3s,
+      transform 0.3s;
+    transform: translateX(-10px);
+  }
+
+  @media (hover: hover) {
+    .recipe-item:hover .arrow-container {
+      color: var(--white);
+      transform: translateX(0);
+    }
+  }
+
+  .recipe-title {
+    font-size: 1.5rem;
+    color: var(--links);
+    text-decoration: none;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    transition: color 0.3s;
+  }
+
+  @media (hover: hover) {
+    .recipe-item:hover .recipe-title {
+      color: var(--white);
+    }
+  }
+
+  .recipe-item p {
+    margin: 0.25rem 0 0 0;
+    color: var(--text);
+    opacity: 0.8;
+  }
+</style>

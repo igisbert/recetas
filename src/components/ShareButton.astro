@@ -1,0 +1,69 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  url: string;
+}
+
+const { title, url } = Astro.props;
+---
+
+<button class="share-button" id="share" data-title={title} data-url={url}>
+  <Icon name="share" size={24} strokeWidth="1" />
+  <span>Compartir</span>
+</button>
+
+<script>
+  const shareBtn = document.getElementById("share");
+
+  shareBtn?.addEventListener("click", () => {
+    const title = shareBtn.dataset.title;
+    const url = shareBtn.dataset.url;
+    if (!title || !url) return;
+    shareRecipe(title, url);
+  });
+
+  function shareRecipe(title: string, url: string) {
+    const message = `Puedes ver la receta ${title} visitando ${url}`;
+    if (navigator.share) {
+      navigator.share({
+        title,
+        text: message,
+        url,
+      });
+    } else {
+      navigator.clipboard.writeText(message);
+      alert("Enlace copiado al portapapeles");
+    }
+  }
+</script>
+
+<style>
+  .share-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 9999rem;
+    background: var(--input);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    .share-button:hover {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+  }
+
+  .share-button:active {
+    transform: scale(1.02);
+  }
+</style>

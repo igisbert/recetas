@@ -1,0 +1,35 @@
+:root {
+    --black: #0a0a0a;
+    --input: #111111;
+    --white: #ffffff;
+    --text: #ededed;
+    --links: #c0c0c0;
+    --border: #1f1f1f;
+    --green: #86df86;
+    --yellow: #f5f595;
+    --red: #f59595;
+}
+
+@font-face {
+    font-family: 'DMSans';
+    src: url('/fonts/DMSans-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DMMono';
+    src: url('/fonts/DMMono-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-color: var(--black);
+    color: var(--text);
+    font-family: 'DMSans', sans-serif;
+}
+
+.hidden {
+    display: none !important;
+}

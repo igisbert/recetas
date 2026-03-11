@@ -1,0 +1,36 @@
+---
+interface Props {
+  carbs: number | 0;
+  protein: number | 0;
+  fat: number | 0;
+}
+
+import { COLOR_CARBS, COLOR_PROTEIN, COLOR_FAT } from "@/constants/recipes";
+
+const { carbs, protein, fat } = Astro.props;
+
+const total = carbs + protein + fat;
+
+const carbsPct = total > 0 ? (carbs / total) * 100 : 0;
+const proteinPct = total > 0 ? (protein / total) * 100 : 0;
+
+// Breakpoints
+const stop1 = carbsPct; // fin de carbs
+const stop2 = carbsPct + proteinPct; // fin de proteína
+
+const gradient = `conic-gradient(
+  ${COLOR_CARBS}   0%                   ${stop1.toFixed(3)}%,
+  ${COLOR_PROTEIN} ${stop1.toFixed(3)}% ${stop2.toFixed(3)}%,
+  ${COLOR_FAT}     ${stop2.toFixed(3)}% 100%
+)`;
+---
+
+<div class="pie" style={`background: ${gradient}`}></div>
+
+<style>
+  .pie {
+    width: 180px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+</style>

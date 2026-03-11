@@ -1,0 +1,253 @@
+---
+import { CATEGORIES } from "@/constants/recipes";
+
+interface Props {
+  categories: typeof CATEGORIES;
+}
+
+const { categories } = Astro.props;
+const categoryIds = categories.map((c) => c.id);
+---
+
+<div class="filters" data-category-ids={JSON.stringify(categoryIds)}>
+  <div class="search-box">
+    <input
+      type="text"
+      id="recipe-search"
+      placeholder="Buscar receta..."
+      aria-label="Buscar receta"
+    />
+  </div>
+
+  <div class="category-filters">
+    <p>Filtrar por categoría:</p>
+    <div class="category-links">
+      <button class="cat-filter-btn active" data-category="all">Todas</button>
+      {
+        categories.map((cat) => (
+          <button class="cat-filter-btn" data-category={cat.id}>
+            {cat.name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  function initFilters() {
+    const filtersContainer = document.querySelector(".filters") as HTMLElement;
+    if (!filtersContainer) return;
+
+    const categoryIds = JSON.parse(
+      filtersContainer.dataset.categoryIds || "[]",
+    ) as string[];
+
+    const searchInput = document.getElementById(
+      "recipe-search",
+    ) as HTMLInputElement;
+    const filterBtns = document.querySelectorAll(".cat-filter-btn");
+    const categorySections = document.querySelectorAll(
+      ".category-section",
+    ) as NodeListOf<HTMLElement>;
+    const noResults = document.getElementById("no-results");
+
+    if (!searchInput || !categorySections.length) return;
+
+    let currentSearch = "";
+    let currentCategory = "all";
+
+    function applyFilters() {
+      categorySections.forEach((section) => {
+        const catId = section.dataset.categoryId;
+        const matchesCat =
+          currentCategory === "all" || currentCategory === catId;
+        const itemsInCat = section.querySelectorAll(
+          ".recipe-item",
+        ) as NodeListOf<HTMLElement>;
+        const sectionTitle = section.querySelector("h2");
+
+        let visibleInCatCount = 0;
+
+        itemsInCat.forEach((item) => {
+          const li = item.querySelector("li");
+          const title = li?.dataset.title || "";
+          const matchesSearch = title.includes(currentSearch.toLowerCase());
+
+          if (!(matchesSearch && matchesCat)) {
+            item.style.viewTransitionClass = "is-filtered";
+          } else {
+            visibleInCatCount++;
+            item.style.viewTransitionClass = "";
+          }
+        });
+
+        if (visibleInCatCount === 0) {
+          section.style.viewTransitionClass = "is-filtered";
+          if (sectionTitle)
+            sectionTitle.style.viewTransitionClass = "is-filtered";
+        } else {
+          section.style.viewTransitionClass = "";
+          if (sectionTitle) sectionTitle.style.viewTransitionClass = "";
+        }
+      });
+
+      if (!document.startViewTransition) {
+        updateDOM();
+        return;
+      }
+
+      document.startViewTransition(() => {
+        updateDOM();
+      });
+
+      function updateDOM() {
+        let anyVisible = false;
+
+        categorySections.forEach((section) => {
+          const catId = section.dataset.categoryId;
+          const itemsInCat = section.querySelectorAll(
+            ".recipe-item",
+          ) as NodeListOf<HTMLElement>;
+          let visibleInCat = 0;
+
+          itemsInCat.forEach((item) => {
+            const li = item.querySelector("li");
+            const title = li?.dataset.title || "";
+            const matchesSearch = title.includes(currentSearch.toLowerCase());
+            const matchesCat =
+              currentCategory === "all" || currentCategory === catId;
+
+            if (matchesSearch && matchesCat) {
+              item.classList.remove("hidden");
+              visibleInCat++;
+            } else {
+              item.classList.add("hidden");
+            }
+          });
+
+          if (visibleInCat > 0) {
+            section.classList.remove("hidden");
+            anyVisible = true;
+          } else {
+            section.classList.add("hidden");
+          }
+        });
+
+        if (anyVisible) {
+          noResults?.classList.add("hidden");
+        } else {
+          noResults?.classList.remove("hidden");
+        }
+
+        document
+          .querySelectorAll('[style*="view-transition-class"]')
+          .forEach((el) => {
+            (el as HTMLElement).style.viewTransitionClass = "";
+          });
+      }
+    }
+
+    const handleHash = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash && (hash === "all" || categoryIds.includes(hash))) {
+        currentCategory = hash;
+        filterBtns.forEach((b) => {
+          const btn = b as HTMLButtonElement;
+          if (btn.dataset.category === hash) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+        applyFilters();
+      }
+    };
+
+    window.addEventListener("hashchange", handleHash);
+    if (window.location.hash) handleHash();
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    searchInput?.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement;
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        currentSearch = target.value;
+        applyFilters();
+      }, 300);
+    });
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = (btn as HTMLButtonElement).dataset.category || "all";
+        applyFilters();
+      });
+    });
+  }
+
+  // Inicialización automática (Astro scripts son módulos y cargan con 'defer')
+  initFilters();
+</script>
+
+<style>
+  .filters {
+    border-radius: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    gap: 1.5rem;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .search-box input {
+    font-family: "DMMono", monospace;
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: var(--input);
+    color: var(--text);
+  }
+
+  .category-filters p {
+    margin: 0 0 0.5rem 0;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--links);
+  }
+
+  .category-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .cat-filter-btn {
+    font-family: "DMMono", monospace;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    background: var(--input);
+    color: var(--text);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .cat-filter-btn:hover {
+    background: var(--border);
+  }
+
+  .cat-filter-btn.active {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+  }
+</style>
