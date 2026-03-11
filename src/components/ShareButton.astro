@@ -28,7 +28,6 @@ const { title, url } = Astro.props;
     const message = `Puedes ver la receta ${title} visitando ${url}`;
     if (navigator.share) {
       navigator.share({
-        title,
         text: message,
         url,
       });
