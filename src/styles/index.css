@@ -24,11 +24,16 @@
     font-style: normal;
 }
 
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     background-color: var(--black);
     color: var(--text);
     font-family: 'DMSans', sans-serif;
 }
+
 
 .hidden {
     display: none !important;
