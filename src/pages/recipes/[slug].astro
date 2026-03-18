@@ -56,6 +56,7 @@ const categoryName =
         carbs={recipe.data.macros?.carbs || 0}
         protein={recipe.data.macros?.protein || 0}
         fat={recipe.data.macros?.fat || 0}
+        showStepper={recipe.data.showStepper}
       />
       <Content />
       <Advice advice={recipe.data.advice} />

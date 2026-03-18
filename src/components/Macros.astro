@@ -4,6 +4,7 @@ interface Props {
   carbs: number | 0;
   protein: number | 0;
   fat: number | 0;
+  showStepper: boolean;
 }
 
 import Pie from "./Pie.astro";
@@ -11,7 +12,7 @@ import Icon from "./Icon.astro";
 
 import { COLOR_CARBS, COLOR_PROTEIN, COLOR_FAT } from "@/constants/recipes";
 
-const { kcal, carbs, protein, fat } = Astro.props;
+const { kcal, carbs, protein, fat, showStepper } = Astro.props;
 
 if (kcal === 0 && carbs === 0 && protein === 0 && fat === 0) return;
 ---
@@ -26,7 +27,11 @@ if (kcal === 0 && carbs === 0 && protein === 0 && fat === 0) return;
   </summary>
   <div class="macros">
     <div class="disclaimer">
-      <span>Información nutricional aproximada por ración</span>
+      {
+        showStepper && (
+          <span>Información nutricional aproximada por ración</span>
+        )
+      }
       <span>Datos calculados con Gemini</span>
     </div>
     <div class="pie-container">
