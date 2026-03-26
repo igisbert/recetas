@@ -10,9 +10,9 @@ const allRecipes = await getCollection("recipes");
 const recipesByCategory = CATEGORIES.map((category) => {
   return {
     ...category,
-    recipes: allRecipes.filter(
-      (recipe) => recipe.data.category === category.id,
-    ),
+    recipes: allRecipes
+      .filter((recipe) => recipe.data.category === category.id)
+      .sort((a, b) => a.data.title.localeCompare(b.data.title, "es")),
   };
 }).filter((c) => c.recipes.length > 0);
 ---
